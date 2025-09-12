@@ -1,0 +1,64 @@
+// Copyright Epic Games, Inc. All Rights Reserved.
+/*===========================================================================
+	Generated code exported from UnrealHeaderTool.
+	DO NOT modify this manually! Edit the corresponding .h files instead!
+===========================================================================*/
+
+// IWYU pragma: private, include "CameraModeConfigs/InputFollowCameraModeConfig.h"
+#include "UObject/ObjectMacros.h"
+#include "UObject/ScriptMacros.h"
+
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
+#ifdef ENHANCEDCAMERASYSTEM_InputFollowCameraModeConfig_generated_h
+#error "InputFollowCameraModeConfig.generated.h already included, missing '#pragma once' in InputFollowCameraModeConfig.h"
+#endif
+#define ENHANCEDCAMERASYSTEM_InputFollowCameraModeConfig_generated_h
+
+#define FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_31_SPARSE_DATA
+#define FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_31_SPARSE_DATA_PROPERTY_ACCESSORS
+#define FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_31_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS
+#define FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_31_RPC_WRAPPERS_NO_PURE_DECLS
+#define FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_31_ACCESSORS
+#define FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_31_INCLASS_NO_PURE_DECLS \
+private: \
+	static void StaticRegisterNativesUInputFollowCameraModeConfig(); \
+	friend struct Z_Construct_UClass_UInputFollowCameraModeConfig_Statics; \
+public: \
+	DECLARE_CLASS(UInputFollowCameraModeConfig, UCameraModeConfigBase, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/EnhancedCameraSystem"), NO_API) \
+	DECLARE_SERIALIZER(UInputFollowCameraModeConfig)
+
+
+#define FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_31_ENHANCED_CONSTRUCTORS \
+private: \
+	/** Private move- and copy-constructors, should never be used */ \
+	NO_API UInputFollowCameraModeConfig(UInputFollowCameraModeConfig&&); \
+	NO_API UInputFollowCameraModeConfig(const UInputFollowCameraModeConfig&); \
+public: \
+	DECLARE_VTABLE_PTR_HELPER_CTOR(NO_API, UInputFollowCameraModeConfig); \
+	DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(UInputFollowCameraModeConfig); \
+	DEFINE_DEFAULT_CONSTRUCTOR_CALL(UInputFollowCameraModeConfig) \
+	NO_API virtual ~UInputFollowCameraModeConfig();
+
+
+#define FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_28_PROLOG
+#define FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_31_GENERATED_BODY \
+PRAGMA_DISABLE_DEPRECATION_WARNINGS \
+public: \
+	FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_31_SPARSE_DATA \
+	FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_31_SPARSE_DATA_PROPERTY_ACCESSORS \
+	FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_31_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS \
+	FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_31_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_31_ACCESSORS \
+	FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_31_INCLASS_NO_PURE_DECLS \
+	FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h_31_ENHANCED_CONSTRUCTORS \
+private: \
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
+
+template<> ENHANCEDCAMERASYSTEM_API UClass* StaticClass<class UInputFollowCameraModeConfig>();
+
+#undef CURRENT_FILE_ID
+#define CURRENT_FILE_ID FID_MyProjects_InvProject_Builds_EnhancedCameraSystem_HostProject_Plugins_EnhancedCameraSystem_Source_EnhancedCameraSystem_Public_CameraModeConfigs_InputFollowCameraModeConfig_h
+
+
+PRAGMA_ENABLE_DEPRECATION_WARNINGS

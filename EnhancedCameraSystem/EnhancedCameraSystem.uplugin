@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Enhanced Camera System",
+	"Description": "Data-driven enhanced camera system using PlayerCameraManager and UObjects camera mode configs.",
+	"Category": "Gameplay",
+	"CreatedBy": "SHANKAHRAJ DATTA",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"EngineVersion": "5.3.0",
+	"CanContainContent": false,
+	"IsExperimentalVersion": true,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "EnhancedCameraSystem",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
