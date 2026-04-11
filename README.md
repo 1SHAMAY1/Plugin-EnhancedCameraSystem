@@ -1,6 +1,6 @@
 # Enhanced Camera System (ECS)
 
-[![Unreal Engine](https://img.shields.io/badge/Unreal%20Engine-5.3%20%7C%205.4%20%7C%205.5-blue?logo=unrealengine&logoColor=white)](https://www.unrealengine.com/)
+[![Unreal Engine](https://img.shields.io/badge/Unreal%20Engine-5.3-blue?logo=unrealengine&logoColor=white)](https://www.unrealengine.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Architecture](https://img.shields.io/badge/Architecture-Data--Driven-brightgreen)](#technical-architecture)
 [![Workflow](https://img.shields.io/badge/Workflow-Designer--First-orange)](#designer-workflow)
@@ -32,26 +32,25 @@ ECS is built on three core engineering principles designed for scalability and p
 ---
 
 ## 🛠️ Requirements & Installation
+
 ### System Requirements
 | Component | Requirement |
 | :--- | :--- |
-| **Unreal Engine** | 5.3, 5.4, 5.5 |
+| **Unreal Engine** | 5.3 |
 | **Project Type** | C++ (Runtime Module) |
 | **Engine Modules** | `GameplayTags`, `Core`, `Engine` |
 
 ### Installation Guide
-1. **Directory Setup**: Clone or copy the plugin to your project's `Plugins` folder:
-   ```bash
-   <YourProject>/Plugins/EnhancedCameraSystem/
-   ```
-2. **Build Configuration**: If modifying, ensure your `Build.cs` includes:
-   ```csharp
-   PublicDependencyModuleNames.AddRange(new string[] { "GameplayTags", "Core", "Engine" });
-   ```
-3. **Project Regeneration**:
-   - Right-click your `.uproject` file and select **Generate Visual Studio project files**.
-   - Open your IDE and perform a **Clean & Build** to ensure module consistency.
-4. **Activation**: Enable the plugin via the **Edit > Plugins** menu if required (usually auto-enabled if in project folder).
+
+#### 📥 Option A: Release ZIP (Recommended)
+1. Download the latest packaged plugin ZIP.
+2. Extract the contents into your project's `Plugins/` directory.
+3. Restart the Editor — no project regeneration is required for pre-built binaries.
+
+#### 🛠️ Option B: From Source (GitHub)
+1. Clone/Copy the repository to `<YourProject>/Plugins/EnhancedCameraSystem/`.
+2. Regenerate project files (Right-click `.uproject` → **Generate Visual Studio project files**).
+3. Build the project in your IDE or let the Editor compile on startup.
 
 ---
 
@@ -63,48 +62,48 @@ ECS utilizes a decoupled architecture where the **Camera Manager** handles orche
 Set your `PlayerCameraManagerClass` in your `GameMode` or `PlayerController` to:
 `AEnhancedPlayerCameraManager`
 
-### 2. Designer Workflow
-Designers create and manage camera views through two primary assets:
-- **`CameraModeConfig`**: Defines specific camera behaviors (Offsets, Lag, FOV, Post-Process). 
-  - *Extensibility*: Create Blueprint subclasses of `CameraModeConfig` to override `CalculateCamera` for custom math (e.g. spring-arm logic).
-- **`CameraModeMap`**: A registry linking `GameplayTags` to specific `CameraModeConfig` assets.
+### 3. Production-Ready Config Templates
+The plugin includes specialized camera configurations to accelerate development:
 
-### 3. Runtime Orchestration
-The system supports both direct state switching and a non-additive stack (Push/Pop).
+| Config Class | Best Use Case | Key Behavior |
+| :--- | :--- | :--- |
+| **`GenericCameraModeConfig`** | General Gameplay | Standard socket-follow with configurable offsets and lag. |
+| **`InputFollowCameraModeConfig`** | Third Person / Orbit | Camera orientation natively follows player input axes. |
+| **`InputToDistanceCurveCameraModeConfig`**| Dynamic Zoom / Dolly | Maps player input to camera distance via customizable curves. |
 
-#### Implementation (C++)
-```cpp
-// 1. Switch by Tag (Uses CameraModeMap registry)
-EnhancedCamMgr->SetCameraModeByTag(FGameplayTag::RequestGameplayTag("Camera.Mode.ThirdPerson"));
-
-// 2. Direct Configuration
-EnhancedCamMgr->SetCameraModeConfig(MyADSConfig, OptionalTag);
-
-// 3. Stack Manipulation (Push/Pop)
-EnhancedCamMgr->PushCameraMode(CinematicConfig, CinematicTag);
-EnhancedCamMgr->PopCameraMode(); // Safely returns to previous state
-```
-
-#### Technical Reference (Data Assets)
+### 4. Technical Reference (Data Assets)
 | Variable | Type | Description |
 | :--- | :--- | :--- |
-| `FollowSocketName` | `FName` | The bone/socket to track. |
-| `SocketOffset` | `FVector` | Relative offset from the socket. |
-| `TargetOffset` | `FVector` | Offset for the look-at target. |
-| `bEnableLag` | `bool` | Toggles positional smoothing. |
-| `TransitionDuration`| `float` | Interpolation time between states. |
+| `FollowSocketName` | `FName` | The bone/socket to track for positional anchoring. |
+| `SocketOffset` | `FVector` | Relative offset from the anchor socket. |
+| `TargetOffset` | `FVector` | Offset for the look-at target (Ideal for over-the-shoulder). |
+| `bEnableLag` | `bool` | Toggles sophisticated positional/rotational smoothing. |
+| `TransitionDuration`| `float` | Controlled interpolation time (seconds) between camera states. |
 
-## 🧩 Examples & Integration
+---
 
-### Blueprint Usage
-Drag from `Get Player Camera Manager` → **Cast to AEnhancedPlayerCameraManager** → Call `SetCameraModeByTag` or `PushCameraMode`.
+## 🔗 Resources & Integration
 
-### C++ Contextual Switching
+### 🎮 Sample Project
+> [!TIP]
+> **[Download Sample Project (UE5.3)](https://drive.google.com/drive/folders/1L0G4GznlmOKkiwyFeq7Und8BddIfQ9yr?usp=sharing)**  
+> Includes preconfigured camera modes, workflow examples, and a test character demonstrating runtime switching.
+
+### 🧩 Technical Implementation
+
+#### Blueprint Integration
+Drag from `Get Player Camera Manager` → **Cast to AEnhancedPlayerCameraManager** → Use `SetCameraModeByTag` (Global) or `PushCameraMode` (Contextual).
+
+#### C++ State Management
 ```cpp
-if (AEnhancedPlayerCameraManager* Enhanced = Cast<AEnhancedPlayerCameraManager>(MyPC->PlayerCameraManager))
+// Example: Standardizing a High-Priority State Transition
+if (AEnhancedPlayerCameraManager* EnhancedCam = Cast<AEnhancedPlayerCameraManager>(PlayerCameraManager))
 {
-    // High-priority cinematic override
-    Enhanced->PushCameraMode(CinematicAsset, FGameplayTag::RequestGameplayTag("Camera.State.Cinematic"));
+    // Contextual Push: E.g., Entering Aim-Down-Sights (ADS)
+    EnhancedCam->PushCameraMode(ADSConfigAsset, FGameplayTag::RequestGameplayTag("Camera.State.ADS"));
+    
+    // Safety Fallback: Pop back to previous gameplay state
+    // EnhancedCam->PopCameraMode(); 
 }
 ```
 
@@ -113,20 +112,14 @@ if (AEnhancedPlayerCameraManager* Enhanced = Cast<AEnhancedPlayerCameraManager>(
 ## 🔍 Troubleshooting & Pipeline Tips
 
 ### Linker Errors (Unresolved Symbols)
-Ensure your module's `.uplugin` and `Build.cs` are synchronized. Linker errors like `unresolved FMemory::Free` typically indicate a missing dependency on `Core` or `Engine` in the project's dependency graph.
+Ensure your module's `.uplugin` and `Build.cs` are synchronized. Linker errors typically indicate a missing dependency on `Core` or `Engine`.
 - **Action**: Verify `EnhancedCameraSystem` is added to `PublicDependencyModuleNames`.
 
 ### DataAsset Visibility
-If custom `CameraModeConfig` subclasses are not appearing in the Data Asset selection:
-1. Compile the project in your IDE.
-2. Restart the Unreal Editor.
-3. Ensure the class is marked with `BlueprintType`.
+If custom configs are not appearing: Compile in IDE → Restart Editor → Right-click → **Misc > Data Asset**.
 
 ### Advanced Extensibility
-For complex camera behaviors (e.g., dynamic offset based on character speed):
-- Create a Blueprint subclass of `CameraModeConfig`.
-- Override the `CalculateCamera` (BlueprintNativeEvent).
-- Implement custom math using the `TargetActor` and `DeltaTime` inputs.
+For complex logic (e.g., raytraced collision avoidance), extend `CameraModeConfig` in Blueprint and override the `CalculateCamera` (BlueprintNativeEvent).
 
 ---
 
