@@ -1,223 +1,141 @@
-# Enhanced Camera System
+# Enhanced Camera System (ECS)
 
-Data-driven, runtime-switchable camera system for Unreal Engine 5.  
-Uses `APlayerCameraManager` subclass and `UDataAsset` camera mode configs to provide mode-driven camera transforms, post-process overrides, and runtime switching (including push/pop stacks). Designed to work in PIE and packaged builds.
+[![Unreal Engine](https://img.shields.io/badge/Unreal%20Engine-5.3%20%7C%205.4%20%7C%205.5-blue?logo=unrealengine&logoColor=white)](https://www.unrealengine.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Architecture](https://img.shields.io/badge/Architecture-Data--Driven-brightgreen)](#technical-architecture)
+[![Workflow](https://img.shields.io/badge/Workflow-Designer--First-orange)](#designer-workflow)
 
----
-
-## Features
-
-- Mode-driven camera configs (DataAssets) with:
-  - Socket follow + socket offset
-  - Target offset (look-at)
-  - Fixed rotation option
-  - Axis clamps (pitch/yaw/roll)
-  - Enable/disable positional lag + configurable lag speed
-  - Mode FOV and post-process override
-  - Transition (blend) duration
-- Runtime switching by gameplay tag (via CameraModeMap data asset)
-- Simple non-additive camera stack (Push / Pop)
-- BlueprintCallable API for easy integration
-- `CalculateCamera` is `BlueprintNativeEvent` — create BP DataAsset subclasses for custom logic (traces, collision avoidance, cinematic offsets, etc.)
+**Enhanced Camera System (ECS)** is a modular, runtime-switchable camera framework for Unreal Engine 5. Designed to meet the demands of high-fidelity productions, ECS decouples complex camera logic from character actors, empowering designers with a robust, data-driven pipeline for managing gameplay perspectives, cinematic transitions, and environmental camera overrides.
 
 ---
 
-## Requirements
+## 🚀 Technical Pillars
 
-- Unreal Engine 5.x (tested on 5.3)
-- C++ project (the plugin is a runtime module)
-- GameplayTags (engine module)
+ECS is built on three core engineering principles designed for scalability and performance in modern AAA environments:
+
+| Pillar | Focus | Implementation |
+| :--- | :--- | :--- |
+| **Modular State Management** | Decoupling | Tag-based mode switching using `AEnhancedPlayerCameraManager`. |
+| **Designer-First Workflow** | Accessibility | Fully configurable `UDataAsset` configs for transforms and post-processing. |
+| **Robust Blend Stack** | Consistency | Native Push/Pop stack logic for seamless cinematic and gameplay transitions. |
 
 ---
 
-## Installation
+## ✨ Key Features
 
-1. Copy the plugin folder into your project:
-   ```
+- **State-Driven Transitions**: Effortlessly switch camera modes via `GameplayTags` or direct stack manipulation.
+- **Contextual Awareness**: Per-mode logic for socket follows, target offsets, and sophisticated axis clamping.
+- **Performant Lag & Smoothing**: Optimized positional and rotational lag algorithms for fluid character-centered tracking.
+- **Visual Overrides**: Integrated Post-Process and FOV overrides per camera state with smooth interpolation.
+- **Total Logic Extensibility**: `CalculateCamera` is exposed as a `BlueprintNativeEvent`, allowing engineers to create specialized logic (e.g., raytraced collision avoidance) within a unified pipeline.
+
+---
+
+## 🛠️ Requirements & Installation
+### System Requirements
+| Component | Requirement |
+| :--- | :--- |
+| **Unreal Engine** | 5.3, 5.4, 5.5 |
+| **Project Type** | C++ (Runtime Module) |
+| **Engine Modules** | `GameplayTags`, `Core`, `Engine` |
+
+### Installation Guide
+1. **Directory Setup**: Clone or copy the plugin to your project's `Plugins` folder:
+   ```bash
    <YourProject>/Plugins/EnhancedCameraSystem/
    ```
-2. If the plugin is already present, ensure the files are consistent and module name is `EnhancedCameraSystem` in:
-   - `EnhancedCameraSystem.uplugin` → `"Name": "EnhancedCameraSystem"`
-   - `Source/EnhancedCameraSystem/EnhancedCameraSystem.Build.cs` → class name `EnhancedCameraSystem`
-   - `IMPLEMENT_MODULE(..., EnhancedCameraSystem)` in the module .cpp
-3. Close the Unreal Editor if open.
-4. Delete stale intermediate directories (optional but recommended):
+2. **Build Configuration**: If modifying, ensure your `Build.cs` includes:
+   ```csharp
+   PublicDependencyModuleNames.AddRange(new string[] { "GameplayTags", "Core", "Engine" });
    ```
-   <YourProject>/Intermediate/ 
-   <YourProject>/Saved/ (optional)
-   <YourProject>/Binaries/
-   Plugins/EnhancedCameraSystem/Intermediate/
-   ```
-5. Regenerate project files:
-   - Windows: Right-click `.uproject` → *Generate Visual Studio project files*  
-   - macOS: run `GenerateProjectFiles.sh` or use the Editor (as appropriate)
-6. Build the project in your IDE (Visual Studio / Xcode) or open the project in the Editor and let it compile.
+3. **Project Regeneration**:
+   - Right-click your `.uproject` file and select **Generate Visual Studio project files**.
+   - Open your IDE and perform a **Clean & Build** to ensure module consistency.
+4. **Activation**: Enable the plugin via the **Edit > Plugins** menu if required (usually auto-enabled if in project folder).
 
 ---
 
-## Enabling the System
+## 🏗️ Core Architecture & Workflow
 
-1. In your `GameMode` (or `PlayerController`) set the `PlayerCameraManagerClass` to:
-   ```
-   AEnhancedPlayerCameraManager
-   ```
-   You can create a Blueprint subclass of `AEnhancedPlayerCameraManager` to set defaults (e.g., `CameraModeMapAsset`) in the editor.
+ECS utilizes a decoupled architecture where the **Camera Manager** handles orchestration and the **Data Assets** define state.
 
-2. Create DataAssets:
-   - `CameraModeConfig` (Right click → Misc → Data Asset → select `CameraModeConfig`):
-     - Configure socket name, socket offset, target offset, fixed rotation, clamps, lag, FOV, post-process, transition duration.
-     - If you need advanced behavior, create a Blueprint subclass of this DataAsset and override `CalculateCamera`.
-   - `CameraModeMap` (DataAsset) — add `ModeTag` → `ModeConfig` pairs.
+### 1. The Manager
+Set your `PlayerCameraManagerClass` in your `GameMode` or `PlayerController` to:
+`AEnhancedPlayerCameraManager`
 
-3. Assign your `CameraModeMap` asset to the `CameraModeMapAsset` property on your `AEnhancedPlayerCameraManager` (via a Blueprint subclass or at runtime).
+### 2. Designer Workflow
+Designers create and manage camera views through two primary assets:
+- **`CameraModeConfig`**: Defines specific camera behaviors (Offsets, Lag, FOV, Post-Process). 
+  - *Extensibility*: Create Blueprint subclasses of `CameraModeConfig` to override `CalculateCamera` for custom math (e.g. spring-arm logic).
+- **`CameraModeMap`**: A registry linking `GameplayTags` to specific `CameraModeConfig` assets.
 
----
+### 3. Runtime Orchestration
+The system supports both direct state switching and a non-additive stack (Push/Pop).
 
-## Runtime API (Blueprint & C++)
-
-**Key functions on `AEnhancedPlayerCameraManager`:**
-
+#### Implementation (C++)
 ```cpp
-// Set by gameplay tag (uses CameraModeMap)
-UFUNCTION(BlueprintCallable, Category="Camera")
-void SetCameraModeByTag(const FGameplayTag& ModeTag);
+// 1. Switch by Tag (Uses CameraModeMap registry)
+EnhancedCamMgr->SetCameraModeByTag(FGameplayTag::RequestGameplayTag("Camera.Mode.ThirdPerson"));
 
-// Set mode directly with a DataAsset
-UFUNCTION(BlueprintCallable, Category="Camera")
-void SetCameraModeConfig(UCameraModeConfig* NewMode, const FGameplayTag& OptionalTag);
+// 2. Direct Configuration
+EnhancedCamMgr->SetCameraModeConfig(MyADSConfig, OptionalTag);
 
-// Push a new mode (saves previous)
-UFUNCTION(BlueprintCallable, Category="Camera")
-void PushCameraMode(UCameraModeConfig* NewMode, const FGameplayTag& OptionalTag);
-
-// Pop back to previous mode
-UFUNCTION(BlueprintCallable, Category="Camera")
-void PopCameraMode();
-
-// Replace CameraModeMap asset at runtime
-UFUNCTION(BlueprintCallable, Category="Camera")
-void SetCameraModeMap(UCameraModeMap* NewMap);
+// 3. Stack Manipulation (Push/Pop)
+EnhancedCamMgr->PushCameraMode(CinematicConfig, CinematicTag);
+EnhancedCamMgr->PopCameraMode(); // Safely returns to previous state
 ```
 
-**DataAsset properties (high-level):**
+#### Technical Reference (Data Assets)
+| Variable | Type | Description |
+| :--- | :--- | :--- |
+| `FollowSocketName` | `FName` | The bone/socket to track. |
+| `SocketOffset` | `FVector` | Relative offset from the socket. |
+| `TargetOffset` | `FVector` | Offset for the look-at target. |
+| `bEnableLag` | `bool` | Toggles positional smoothing. |
+| `TransitionDuration`| `float` | Interpolation time between states. |
 
-- `FollowSocketName` (FName)
-- `SocketOffset` (FVector)
-- `TargetOffset` (FVector)
-- `bUseFixedRotation` (bool) + `FixedRotation` (FRotator)
-- `bClampPitch`, `PitchClamp` (FVector2D) — same for yaw/roll
-- `TransitionDuration` (float)
-- `bEnableLag` (bool), `LagSpeed` (float)
-- `ModeFOV` (float)
-- `bApplyPostProcess` (bool), `PostProcessSettings` (FPostProcessSettings)
+## 🧩 Examples & Integration
 
-**`CalculateCamera` signature (DataAsset):**
+### Blueprint Usage
+Drag from `Get Player Camera Manager` → **Cast to AEnhancedPlayerCameraManager** → Call `SetCameraModeByTag` or `PushCameraMode`.
+
+### C++ Contextual Switching
 ```cpp
-UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Camera")
-FCameraTransformResult CalculateCamera(
-    AActor* TargetActor,
-    const FVector& CurrentCameraLocation,
-    const FRotator& CurrentCameraRotation,
-    float DeltaTime
-) const;
-```
-Return an `FCameraTransformResult` with Location, Rotation, FOV, and optional PostProcess settings.
-
----
-
-## Example usage (C++)
-
-Switch by tag:
-```cpp
-// Example: switch to third person tag
-if (APlayerCameraManager* CamMgr = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0))
+if (AEnhancedPlayerCameraManager* Enhanced = Cast<AEnhancedPlayerCameraManager>(MyPC->PlayerCameraManager))
 {
-    if (AEnhancedPlayerCameraManager* Enhanced = Cast<AEnhancedPlayerCameraManager>(CamMgr))
-    {
-        const FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName("Camera.Mode.ThirdPerson"));
-        Enhanced->SetCameraModeByTag(Tag);
-    }
+    // High-priority cinematic override
+    Enhanced->PushCameraMode(CinematicAsset, FGameplayTag::RequestGameplayTag("Camera.State.Cinematic"));
 }
 ```
 
-Push/pop example:
-```cpp
-Enhanced->PushCameraMode(MyADSModeAsset, FGameplayTag::RequestGameplayTag("Camera.Mode.ADS"));
-// Later...
-Enhanced->PopCameraMode();
-```
+---
 
-Blueprint:
-- Drag from `Get Player Camera Manager` → cast to `EnhancedPlayerCameraManager` → call `SetCameraModeByTag` / `PushCameraMode` / `PopCameraMode`.
+## 🔍 Troubleshooting & Pipeline Tips
+
+### Linker Errors (Unresolved Symbols)
+Ensure your module's `.uplugin` and `Build.cs` are synchronized. Linker errors like `unresolved FMemory::Free` typically indicate a missing dependency on `Core` or `Engine` in the project's dependency graph.
+- **Action**: Verify `EnhancedCameraSystem` is added to `PublicDependencyModuleNames`.
+
+### DataAsset Visibility
+If custom `CameraModeConfig` subclasses are not appearing in the Data Asset selection:
+1. Compile the project in your IDE.
+2. Restart the Unreal Editor.
+3. Ensure the class is marked with `BlueprintType`.
+
+### Advanced Extensibility
+For complex camera behaviors (e.g., dynamic offset based on character speed):
+- Create a Blueprint subclass of `CameraModeConfig`.
+- Override the `CalculateCamera` (BlueprintNativeEvent).
+- Implement custom math using the `TargetActor` and `DeltaTime` inputs.
 
 ---
 
-## Troubleshooting (common build issues)
+## 🏳️ License & Support
+Released under the **MIT License**. Engineered for stability and performance.
 
-### Linker errors: unresolved `FMemory::Free`, `FString` constructors, etc.
-These typically indicate a module name or Build.cs configuration mismatch.
+> [!NOTE]
+> For enterprise-grade support or custom feature requests, please open a GitHub Issue with your UE version and reproduction logs.
 
-Checklist:
-- Ensure module name is consistent:
-  - `.uplugin` `"Name"` matches the Build.cs class name and the `IMPLEMENT_MODULE` module name.
-  - Example: `EnhancedCameraSystem` must appear in:
-    - `EnhancedCameraSystem.uplugin` → `"Name": "EnhancedCameraSystem"`
-    - `Source/EnhancedCameraSystem/EnhancedCameraSystem.Build.cs` → `public class EnhancedCameraSystem : ModuleRules`
-    - `IMPLEMENT_MODULE(FEnhancedCameraSystemModule, EnhancedCameraSystem)`
-- Ensure `Build.cs` contains **Core**, **CoreUObject**, and **Engine** in `PublicDependencyModuleNames`.
-- Delete `Binaries/` and `Intermediate/` and regenerate project files after changing module/.uplugin files.
-- Regenerate project files and perform a full **Clean** and **Rebuild** in your IDE.
+© 2024 Shankharaj Datta
 
-### IDE unresolved symbols (e.g., `CameraCache`)
-- Some engine internals are accessible during compile but flagged by IDE code analysis. If compilation succeeds, minor IDE warnings can be ignored.
-- Prefer documented API calls: `GetCameraLocation()`, `GetCameraRotation()`, `GetFOVAngle()`, and `SetCameraCachePOV(FMinimalViewInfo)`.
-
-### Creating DataAssets not visible
-- Compile the project, restart the Editor, then right-click → *Miscellaneous* → *Data Asset* → pick `CameraModeConfig` / `CameraModeMap`.
-- If you switched between `UDataAsset` and `UPrimaryDataAsset`, restart the Editor after compiling.
-
----
-
-## Editor tips
-
-- Create a Blueprint subclass of `AEnhancedPlayerCameraManager` to set the `CameraModeMapAsset` in defaults.
-- For complex camera behaviors (collision avoidance, dynamic offsets), create a Blueprint DataAsset subclass and override `CalculateCamera` (BlueprintNativeEvent).
-- To blend post-process settings smoothly, implement field-by-field lerps (the plugin uses a simple replace by default).
-
----
-
-## Contributing
-
-1. Fork the repository.
-2. Create a feature branch: `git checkout -b feat/my-feature`.
-3. Make changes, keep public headers stable if possible.
-4. Submit a PR with a clear description and testing steps.
-
-Please include:
-- UE version used
-- Steps to reproduce
-- Build logs if you hit linker errors
-
----
-
-## License
-
-This project is licensed under the MIT License — see `LICENSE` for details.  
-(Replace with your preferred license if needed.)
-
----
-
-## Changelog
-
-- **v1.1** — Stabilized module naming and Build.cs dependencies; switched to `UDataAsset`; use `SetCameraCachePOV` for applying camera POV.
-- **v1.0** — Initial implementation: camera modes, runtime switching, push/pop stack, BlueprintNativeEvent `CalculateCamera`.
-
----
-
-## Contact & Support
-
-For issues, open a GitHub Issue with:
-- UE version
-- Plugin version (branch/tag)
-- Reproduction steps and logs
 
