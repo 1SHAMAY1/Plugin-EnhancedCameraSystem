@@ -9,15 +9,15 @@
 
 ---
 
-## 🚀 Technical Design
+## 🚀 Design Principles
 
-ECS is designed for the performance and scalability requirements of large-scale projects (Witcher-style open worlds or Cyberpunk-style dense urban environments):
+ECS is built to handle complex camera transitions in large production environments:
 
-| Feature | Design Implementation |
+| Feature | Implementation |
 | :--- | :--- |
-| **Decoupled Architecture** | Logic is contained in `UCameraModeConfigBase` assets, keeping character code clean. |
-| **Stack-Based Logic** | Native `TArray` stack using `FGameplayTag` for fast, predictable state switching. |
-| **Smoothing & Blending** | Built-in lerp/slerp blending with customizable jitter-damping and lag. |
+| **Data-Driven** | Camera logic is defined in `UCameraModeConfigBase` data assets. |
+| **Stack Logic** | Uses an `FCameraStackEntry` stack for predictable state transitions. |
+| **Native Smoothing** | Built-in support for positional/rotational lag and collision caching. |
 
 ---
 
@@ -27,12 +27,12 @@ The system uses a data-driven stack where the Camera Manager processes the activ
 
 ```mermaid
 graph TD
-    A[Game Logic / GAS] -->|Push/Pop Tag| B(Player Camera Manager)
+    A[Game Logic / GAS] -->|Push/Pop Tag| B(Enhanced Player Camera Manager)
     B --> C{Camera Stack}
     C -->|Active| D[Camera Mode Config]
-    D -->|Data Asset| E[Transform / FOV / PP]
-    B -->|Calculation| F[Collision & Clipping]
-    F -->|Result| G[View Target]
+    D -->|Settings| E[Location / Rotation / FOV / PP]
+    B -->|UpdateCamera| F[Collision / Lag / Smoothing]
+    F -->|Result| G[Final View Target]
 ```
 
 ---
