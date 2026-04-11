@@ -51,8 +51,6 @@ graph TD
 
 | Metric | Detail |
 | :--- | :--- |
-| **CPU Time** | < 0.02ms (measured on mid-range hardware). |
-| **Memory** | Minimal footprint (~2KB heap usage per character). |
 | **Tick Method**| Directly overrides `UpdateCamera` for maximum efficiency. |
 | **Complexity** | O(1) state lookups and stack operations. |
 
@@ -64,7 +62,7 @@ graph TD
 | Component | Requirement |
 | :--- | :--- |
 | **Unreal Engine** | 5.3 |
-| **Project Type** | C++ (Runtime Module) |
+| **Project Type** | C++ or Blueprint |
 | **Engine Modules** | `GameplayTags`, `Core`, `Engine` |
 
 ### Installation Guide
@@ -105,8 +103,10 @@ The plugin includes specialized camera configurations to accelerate development:
 | `SocketOffset` | `FVector` | Offset relative to the follow socket. |
 | `TargetOffset` | `FVector` | Look-at offset (useful for over-the-shoulder). |
 | `bEnableLag` | `bool` | Enables smoothing for position and rotation. |
-| `TransitionDuration`| `float` | Time (in seconds) to blend between modes. |
-| `BlendCurve` | `UCurveFloat*`| Optional easing curve for transitions. |
+| `TransitionDuration`| `float` | Time (in seconds) to blend when switching TO this mode. |
+
+> [!NOTE]
+> Specialized configs (like `InputToDistanceCurveCameraModeConfig`) use **`FRuntimeFloatCurve`** for high-precision input mapping.
 
 ---
 
@@ -145,7 +145,7 @@ ECS works best when tied to **GameplayTags**. For example:
 - **Logic**: Use ability activation to `PushCameraMode` and expiration to `PopCameraMode`.
 
 ### Target Platforms
-The system is frame-rate independent and tested on PC and console (PS5/Xbox Series) environments.
+The system is frame-rate independent (uses `DeltaTime` for all smoothing) and has been tested on **Windows**. Support for other platforms is technically feasible but currently untested.
 
 ### Custom Collision
 If you need specific occlusion logic (e.g., dense jungle or tight corridors):
