@@ -10,7 +10,7 @@
 **Enhanced Camera System (ECS)** is a modular, high-performance, runtime-switchable camera framework for Unreal Engine 5 (UE 5.3). Designed for AAA productions and dynamic action titles, ECS completely decouples camera behaviors from character blueprints. It empowers designers with a prioritized, data-driven camera stack for cinematic transitions, aiming perspectives (ADS), sprint FOV blends, and environmental occlusion overrides.
 
 > [!TIP]
-> **Zero Compilation Required for Blueprint Users**: Pre-compiled Win64 editor binaries (`.dll` + `.modules`) are included. Simply copy `EnhancedCameraSystem` into your project's `Plugins/` folder!
+> **Zero Compilation Required for Blueprint Users**: Pre-compiled Win64 editor binaries (`.dll` + `.modules`) are included. Simply copy the `5.3/EnhancedCameraSystem` folder into your project's `Plugins/` folder!
 
 ---
 
@@ -102,14 +102,14 @@ flowchart TD
 ## 🛠️ Installation & Setup
 
 ### 1. Installation
-1. Copy the `EnhancedCameraSystem` folder into your project's `Plugins/` directory:
+1. Copy the inner `5.3/EnhancedCameraSystem` folder into your project's `Plugins/` directory:
    ```text
    YourProject/
    └── Plugins/
        └── EnhancedCameraSystem/
            ├── EnhancedCameraSystem.uplugin
            ├── Binaries/Win64/
-           ├── Content/
+           ├── Resources/
            └── Source/
    ```
 2. Enable the plugin under **Edit > Plugins > Gameplay > Enhanced Camera System**.
